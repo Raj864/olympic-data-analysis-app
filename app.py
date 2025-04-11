@@ -8,7 +8,7 @@ import plotly.figure_factory as ff
 import numpy as np
 # from * import preprocesser
 st.sidebar.title('Olympics Analysis')
-
+st.sidebar.image('./images/olympics 1.png')
 user_menu = st.sidebar.radio(
     'Select An Option',
     ('Medal Tally','Overall Analysis','Country-Wise Analysis','Athlete Wise Analysis')
