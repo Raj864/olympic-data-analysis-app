@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.figure_factory as ff
 import numpy as np
-helper import get_country_athlete_count
+import get_country_athlete_count
 from helper import get_medal_counts
 
 
