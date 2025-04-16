@@ -125,3 +125,32 @@ def get_country_medal_trend(df, country):
 def get_country_top_sports(df, country):
     df_country = df[(df['region'] == country) & (df['Medal'].notnull())]
     return df_country['Sport'].value_counts().head(5)
+
+
+
+
+
+
+def get_country_athlete_count(df, country):
+    return df[df['region'] == country]['ID'].nunique()
+
+def get_country_sport_participation(df, country):
+    return df[df['region'] == country]['Sport'].value_counts()
+
+def get_country_medal_trend(df, country):
+    df_country = df[(df['region'] == country) & (df['Medal'].notnull())]
+    return df_country.groupby('Year')['Medal'].count()
+
+def get_country_top_sports(df, country):
+    df_country = df[(df['region'] == country) & (df['Medal'].notnull())]
+    return df_country['Sport'].value_counts().head(5)
+
+def compare_countries_medal_count(df, country1, country2):
+    medals1 = df[(df['region'] == country1) & (df['Medal'].notnull())]['Medal'].value_counts()
+    medals2 = df[(df['region'] == country2) & (df['Medal'].notnull())]['Medal'].value_counts()
+    return pd.DataFrame({
+        'Medal': ['Gold', 'Silver', 'Bronze'],
+        country1: [medals1.get('Gold', 0), medals1.get('Silver', 0), medals1.get('Bronze', 0)],
+        country2: [medals2.get('Gold', 0), medals2.get('Silver', 0), medals2.get('Bronze', 0)]
+    }).set_index('Medal')
+
