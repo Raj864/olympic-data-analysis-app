@@ -179,3 +179,53 @@ if user_menu == 'Athlete Wise Analysis':
     st.plotly_chart(fig)
     
     
+
+
+
+
+
+
+# Country vs Country Analysis
+st.title("Country vs Country Analysis")
+
+# Load and preprocess data
+df = pd.read_csv('athlete_events.csv')
+region_df = pd.read_csv('noc_regions.csv')
+df = df.merge(region_df, on='NOC', how='left')
+
+# Drop rows with missing 'region' or 'Medal'
+df = df.dropna(subset=['region', 'Medal'])
+
+# Get list of unique countries
+countries = df['region'].dropna().unique()
+countries.sort()
+
+# Country selection
+col1, col2 = st.columns(2)
+with col1:
+    country1 = st.selectbox("Select First Country", countries)
+with col2:
+    country2 = st.selectbox("Select Second Country", countries)
+
+if country1 == country2:
+    st.warning("Please select two different countries.")
+else:
+    # Get medal counts
+    medals_c1 = get_medal_counts(df, country1)
+    medals_c2 = get_medal_counts(df, country2)
+
+    # Create DataFrame for visualization
+    medal_df = pd.DataFrame({
+        'Medal': ['Gold', 'Silver', 'Bronze'],
+        country1: [medals_c1['Gold'], medals_c1['Silver'], medals_c1['Bronze']],
+        country2: [medals_c2['Gold'], medals_c2['Silver'], medals_c2['Bronze']]
+    })
+
+    # Melt the DataFrame for seaborn
+    medal_df_melted = medal_df.melt(id_vars='Medal', var_name='Country', value_name='Count')
+
+    # Plotting
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.barplot(data=medal_df_melted, x='Medal', y='Count', hue='Country', ax=ax)
+    ax.set_title(f'Medal Comparison: {country1} vs {country2}')
+    st.pyplot(fig)
