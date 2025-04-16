@@ -35,7 +35,23 @@ def get_country_year(df):
     country = sorted(country)
     country.insert(0,'Overall')
     return year,country
-    
+
+
+
+
+# helper.py
+
+def get_medal_counts(df, country):
+    """
+    Returns a dictionary with counts of Gold, Silver, and Bronze medals for the specified country.
+    """
+    medals = df[df['region'] == country]['Medal'].value_counts()
+    return {
+        'Gold': medals.get('Gold', 0),
+        'Silver': medals.get('Silver', 0),
+        'Bronze': medals.get('Bronze', 0)
+    }
+
 def data_over_time (df,column,name):
 
     data_over_time_df = df.drop_duplicates(['Year',column])['Year'].value_counts().reset_index()
