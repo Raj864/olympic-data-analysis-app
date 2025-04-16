@@ -188,44 +188,115 @@ from helper import get_medal_counts
 # Country vs Country Analysis
 st.title("Country vs Country Analysis")
 
-# Load and preprocess data
-df = pd.read_csv('athlete_events.csv')
-region_df = pd.read_csv('noc_regions.csv')
-df = df.merge(region_df, on='NOC', how='left')
+# # Load and preprocess data
+# df = pd.read_csv('athlete_events.csv')
+# region_df = pd.read_csv('noc_regions.csv')
+# df = df.merge(region_df, on='NOC', how='left')
 
-# Drop rows with missing 'region' or 'Medal'
-df = df.dropna(subset=['region', 'Medal'])
+# # Drop rows with missing 'region' or 'Medal'
+# df = df.dropna(subset=['region', 'Medal'])
 
-# Get list of unique countries
-countries = df['region'].dropna().unique()
-countries.sort()
+# # Get list of unique countries
+# countries = df['region'].dropna().unique()
+# countries.sort()
 
-# Country selection
-col1, col2 = st.columns(2)
-with col1:
-    country1 = st.selectbox("Select First Country", countries)
-with col2:
-    country2 = st.selectbox("Select Second Country", countries)
+# # Country selection
+# col1, col2 = st.columns(2)
+# with col1:
+#     country1 = st.selectbox("Select First Country", countries)
+# with col2:
+#     country2 = st.selectbox("Select Second Country", countries)
 
-if country1 == country2:
-    st.warning("Please select two different countries.")
-else:
-    # Get medal counts
-    medals_c1 = get_medal_counts(df, country1)
-    medals_c2 = get_medal_counts(df, country2)
+# if country1 == country2:
+#     st.warning("Please select two different countries.")
+# else:
+#     # Get medal counts
+#     medals_c1 = get_medal_counts(df, country1)
+#     medals_c2 = get_medal_counts(df, country2)
 
-    # Create DataFrame for visualization
-    medal_df = pd.DataFrame({
-        'Medal': ['Gold', 'Silver', 'Bronze'],
-        country1: [medals_c1['Gold'], medals_c1['Silver'], medals_c1['Bronze']],
-        country2: [medals_c2['Gold'], medals_c2['Silver'], medals_c2['Bronze']]
-    })
+#     # Create DataFrame for visualization
+#     medal_df = pd.DataFrame({
+#         'Medal': ['Gold', 'Silver', 'Bronze'],
+#         country1: [medals_c1['Gold'], medals_c1['Silver'], medals_c1['Bronze']],
+#         country2: [medals_c2['Gold'], medals_c2['Silver'], medals_c2['Bronze']]
+#     })
 
-    # Melt the DataFrame for seaborn
-    medal_df_melted = medal_df.melt(id_vars='Medal', var_name='Country', value_name='Count')
+#     # Melt the DataFrame for seaborn
+#     medal_df_melted = medal_df.melt(id_vars='Medal', var_name='Country', value_name='Count')
 
-    # Plotting
-    fig, ax = plt.subplots(figsize=(10, 6))
-    sns.barplot(data=medal_df_melted, x='Medal', y='Count', hue='Country', ax=ax)
-    ax.set_title(f'Medal Comparison: {country1} vs {country2}')
-    st.pyplot(fig)
+#     # Plotting
+#     fig, ax = plt.subplots(figsize=(10, 6))
+#     sns.barplot(data=medal_df_melted, x='Medal', y='Count', hue='Country', ax=ax)
+#     ax.set_title(f'Medal Comparison: {country1} vs {country2}')
+#     st.pyplot(fig)
+
+
+
+
+
+elif user_menu == 'Country vs Country Analysis':
+    st.title("Detailed Country vs Country Analysis")
+
+    countries = df['region'].dropna().unique().tolist()
+    countries.sort()
+
+    col1, col2 = st.columns(2)
+    with col1:
+        country1 = st.selectbox("Select First Country", countries)
+    with col2:
+        country2 = st.selectbox("Select Second Country", countries)
+
+    if country1 == country2:
+        st.warning("Please select two different countries.")
+    else:
+        col3, col4 = st.columns(2)
+
+        with col3:
+            st.subheader(f"Athletes from {country1}")
+            count1 = get_country_athlete_count(df, country1)
+            st.metric(label="Total Athletes", value=count1)
+
+        with col4:
+            st.subheader(f"Athletes from {country2}")
+            count2 = get_country_athlete_count(df, country2)
+            st.metric(label="Total Athletes", value=count2)
+
+        # 🥇 Medal Count Comparison
+        st.subheader("Medal Count Comparison")
+        medal_df = compare_countries_medal_count(df, country1, country2)
+        st.dataframe(medal_df)
+        medal_df.plot(kind='bar')
+        st.pyplot(plt)
+
+        # 📊 Year-wise Medal Trend
+        st.subheader("Medal Trend Over Years")
+        trend1 = get_country_medal_trend(df, country1)
+        trend2 = get_country_medal_trend(df, country2)
+
+        medal_trend_df = pd.DataFrame({country1: trend1, country2: trend2})
+        st.line_chart(medal_trend_df.fillna(0))
+
+        # 🏋️ Sport Participation
+        st.subheader("Sports Participation Count")
+        sp1 = get_country_sport_participation(df, country1).head(10)
+        sp2 = get_country_sport_participation(df, country2).head(10)
+
+        fig, ax = plt.subplots(figsize=(12, 5))
+        sns.barplot(x=sp1.index, y=sp1.values, color='blue', label=country1)
+        sns.barplot(x=sp2.index, y=sp2.values, color='orange', label=country2)
+        plt.legend()
+        plt.xticks(rotation=45)
+        st.pyplot(fig)
+
+        # 🔝 Top Performing Sports
+        st.subheader("Top 5 Sports by Medal Wins")
+        top1 = get_country_top_sports(df, country1)
+        top2 = get_country_top_sports(df, country2)
+
+        col5, col6 = st.columns(2)
+        with col5:
+            st.markdown(f"**{country1}**")
+            st.bar_chart(top1)
+        with col6:
+            st.markdown(f"**{country2}**")
+            st.bar_chart(top2)
