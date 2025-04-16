@@ -234,7 +234,7 @@ st.title("Country vs Country Analysis")
 
 
 
-elif user_menu == 'Country vs Country Analysis':
+if user_menu == 'Country vs Country Analysis':
     st.title("Detailed Country vs Country Analysis")
 
     countries = df['region'].dropna().unique().tolist()
