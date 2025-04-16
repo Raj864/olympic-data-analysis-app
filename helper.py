@@ -106,3 +106,22 @@ def men_vs_women(df):
     final.fillna(0,inplace=True)
     final.rename(columns={'Name_x':'Female','Name_y':'Male'},inplace=True)
     return final
+
+
+
+
+
+
+def get_country_athlete_count(df, country):
+    return df[df['region'] == country]['ID'].nunique()
+
+def get_country_sport_participation(df, country):
+    return df[df['region'] == country]['Sport'].value_counts()
+
+def get_country_medal_trend(df, country):
+    df_country = df[(df['region'] == country) & (df['Medal'].notnull())]
+    return df_country.groupby('Year')['Medal'].count()
+
+def get_country_top_sports(df, country):
+    df_country = df[(df['region'] == country) & (df['Medal'].notnull())]
+    return df_country['Sport'].value_counts().head(5)
