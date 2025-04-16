@@ -10,7 +10,7 @@ import get_country_athlete_count
 from helper import get_medal_counts
 
 
-from * import preprocesser
+# from * import preprocesser
 st.sidebar.title('Olympics Analysis')
 st.sidebar.image('./images/olympics 1.png')
 user_menu = st.sidebar.radio(
