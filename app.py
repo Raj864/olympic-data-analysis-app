@@ -183,7 +183,7 @@ if user_menu == 'Athlete Wise Analysis':
 
 
 
-
+from helper import get_medal_counts
 
 # Country vs Country Analysis
 st.title("Country vs Country Analysis")
